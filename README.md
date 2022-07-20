@@ -101,9 +101,9 @@ If you are working in a VScode command line interface (terminal cmd):
 This is given with `cmd.exe` in mind:
 
 ``` sh
-python3 -m venv .venv
-.venv/bin/activate
-pip install wheel sphinx
+python -m venv .venv
+.venv\scripts\activate
+python -m pip install wheel sphinx
 python setup.py install
 python setup.py apidoc
 python setup.py build_sphinx
