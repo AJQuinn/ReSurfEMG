@@ -2,9 +2,92 @@
 Copyright 2022 Netherlands eScience Center and University of Twente
 Licensed under the Apache License, version 2.0. See LICENSE for details.
 
+
+
+ReSurfEMG/Legacy/helper_functions.py
+====================================
+
+Original description
+--------------------
+
 This file contains functions to work with various EMG arrays
 and other types of data arrays e.g. ventilator signals.
 
+Legacy notes
+------------
+
+helper_functions used to contain all ReSurfEMG routines. This file is 
+split as of September 2023, and the routines in it are distributed 
+over multiple submodules. This file is not maintained anymore and will
+be removed in future versions (v1.0.0+)
+- general.py
+    o Classes:
+        Range
+    o Functions: 
+        scale_arrays
+        slices_slider
+        slices_jump_slider
+        zero_one_for_jumps_base
+        count_decision_array
+        ranges_of
+        intersections
+        raw_overlap_percent
+        relative_levenshtein
+        merge
+        distance_matrix
+        delay_embedding
+- preprocessing.py
+    o Functions: 
+        emg_bandpass_butter
+        emg_bandpass_butter_sample
+        bad_end_cutter
+        bad_end_cutter_for_samples
+        bad_end_cutter_better
+        emg_lowpass_butter
+        notch_filter
+        emg_highpass_butter
+        compute_power_loss
+- ecg_removal.py
+    o Functions: 
+        compute_ICA_two_comp
+        compute_ICA_two_comp_multi
+        pick_more_peaks_array
+        pick_lowest_correlation_array    
+        pick_highest_correlation_array
+        gating
+        hi_envelope
+        find_peaks_in_ecg_signal
+- evelope.py
+    o Functions: 
+        full_rolling_rms
+        naive_rolling_rms
+        running_smoother
+        smooth_for_baseline
+        smooth_for_baseline_with_overlay
+        vect_naive_rolling_rms
+- parameters.py
+    o Functions: 
+        entropical
+        entropical
+        simple_area_under_curve
+        times_under_curve
+        pseudo_slope
+        area_under_curve
+        find_peak_in_breath
+        variability_maker
+        rowwise_chebyshev
+        sampen
+        sampen_optimized
+        calc_closed_sampent
+        calc_open_sampent
+        entropy_maker
+- pipelines.py
+    o Functions: 
+        working_pipeline_exp
+        working_pipeline_pre_ml
+- visualization.py
+    o Functions: 
+        show_my_power_spectrum
 """
 
 
