@@ -88,7 +88,6 @@ def smooth_for_baseline(
         wmax, wmin = nwmax, nwmin
     return array, dists
 
-
 def smooth_for_baseline_with_overlay(
     my_own_array, threshold=10, start=None, end=None, smooth=100
 ):

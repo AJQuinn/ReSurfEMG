@@ -34,7 +34,6 @@ def emg_bandpass_butter(data_emg, low_pass, high_pass):
     emg_filtered = signal.sosfiltfilt(sos, data_emg.samples)
     return emg_filtered
 
-
 def emg_bandpass_butter_sample(
     data_emg_samp,
     low_pass,
@@ -69,7 +68,6 @@ def emg_bandpass_butter_sample(
     # sos (output parameter)is second order section  -> "stabilizes" ?
     emg_filtered = signal.sosfiltfilt(sos, data_emg_samp)
     return emg_filtered
-
 
 def bad_end_cutter(data_emg, percent_to_cut=7, tolerance_percent=10):
     """This algorithm takes the end off of EMGs where the end is
@@ -120,7 +118,6 @@ def bad_end_cutter(data_emg, percent_to_cut=7, tolerance_percent=10):
 
     return sample_cut
 
-
 def bad_end_cutter_for_samples(
     data_emg,
     percent_to_cut=7,
@@ -164,7 +161,6 @@ def bad_end_cutter_for_samples(
 
     return sample_cut
 
-
 def bad_end_cutter_better(data_emg, percent_to_cut=7, tolerance_percent=10):
     """This algorithm takes the end off of EMGs where the end is
     radically altered, or if not radically altered cuts the last 10
@@ -203,8 +199,6 @@ def bad_end_cutter_better(data_emg, percent_to_cut=7, tolerance_percent=10):
         sample_cut = sample[:, :-10]
 
     return sample_cut
-
-
 
 def emg_lowpass_butter(array, cutoff, fs, order=5):
     """

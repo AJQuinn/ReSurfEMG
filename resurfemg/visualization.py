@@ -38,4 +38,3 @@ def show_my_power_spectrum(sample, sample_rate, upper_window):
     plt.plot(xf[idx], yf[idx])
     plt.show()
     return yf, xf
-

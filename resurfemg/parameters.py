@@ -37,7 +37,6 @@ def entropical(sig):
     e_x = [-p_x*math.log(p_x, 2) for p_x in probabilit]
     return sum(e_x)
 
-
 def entropy_scipy(sli, base=None):
     """
     This function wraps scipy.stats entropy  (which is a Shannon entropy)
@@ -142,7 +141,6 @@ def pseudo_slope(
     pseudoslope = abs_height / abs_time
     return pseudoslope
 
-
 def area_under_curve(
     array,
     start_index,
@@ -210,7 +208,6 @@ def area_under_curve(
     nonzero = np.nonzero(tail)[0]
     end = nonzero[0] if len(nonzero) else new_array.shape[0] - 1
     return np.sum(new_array[:(max_ind + end)])
-
 
 def find_peak_in_breath(
     array,
@@ -338,7 +335,6 @@ def variability_maker(
 
     return variability_array
 
-
 def rowwise_chebyshev(x, y):
     return np.max(np.abs(x - y), axis=1)
 
@@ -465,7 +461,6 @@ def sampen(
             saen = np.inf
     return saen
 
-
 def sampen_optimized(
         data,
         tolerance=None,
@@ -554,7 +549,6 @@ def calc_closed_sampent(t_vecs, n, tolerance):
     # TODO(someone?): Analogous to calc_open_sampent
     return np.nan, np.nan
 
-
 def calc_open_sampent(t_vecs, n, tolerance):
     triplets = t_vecs[:n - 2, :3]
 
@@ -568,7 +562,6 @@ def calc_open_sampent(t_vecs, n, tolerance):
     dsts_max_a = np.logical_and(dsts_gt[:, 0], dsts_gt[:, 1])
     dsts_max = np.logical_and(dsts_max_a, dsts_gt[:, 2])
     return np.sum(dsts_max_a), np.sum(dsts_max)
-
 
 def entropy_maker(
         array,

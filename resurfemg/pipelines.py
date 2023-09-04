@@ -10,8 +10,6 @@ from . import preprocessing as pp
 from . import ecg_removal as ecg
 from . import envelope as evl
 
-
-
 def working_pipeline_exp(our_chosen_file):
     """This function is legacy.
     It produces a filtered respiratory EMG signal from a
@@ -109,4 +107,3 @@ def working_pipeline_pre_ml(our_chosen_samples, picker='heart'):
     final_envelope_d = pp.emg_highpass_butter(abs_values, 150, 2048)
 
     return final_envelope_d
-

@@ -101,7 +101,6 @@ def slices_slider(array_sample, slice_len):
     for i in range(len(array_sample) - slice_len + 1):
         yield array_sample[i:i + slice_len]
 
-
 def slices_jump_slider(array_sample, slice_len, jump):
     """
     This function produces continuous sequential slices over an
@@ -182,7 +181,6 @@ def ranges_of(array):
     )
     return range_return
 
-
 def intersections(left, right):
     """This function works over two arrays, :code:`left` and
     :code:`right`, and allows a picking based on intersections.  It
@@ -210,7 +208,6 @@ def intersections(left, right):
             i += 1
     return result
 
-
 def raw_overlap_percent(signal1, signal2):
     """This function takes two binary 0 or 1 signal arrays and gives
     the percentage of overlap.
@@ -233,7 +230,6 @@ def raw_overlap_percent(signal1, signal2):
         signal1.astype(int) & signal2.astype(int)
     ) / longer_signal_len
     return raw_overlap_percent_output
-
 
 def relative_levenshtein(signal1, signal2):
     """

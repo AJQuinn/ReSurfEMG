@@ -96,7 +96,6 @@ def pick_more_peaks_array(components_tuple):
         print("this is very strange data, please examine by hand")
     return emg_component
 
-
 def pick_lowest_correlation_array(components_tuple, ecg_lead):
     """Here we have a function that takes a tuple with the two parts
     of ICA and the array containing the ECG recording, and finds the
@@ -137,7 +136,6 @@ def pick_lowest_correlation_array(components_tuple, ecg_lead):
     emg_component = components_tuple[lowest_index]
 
     return emg_component
-
 
 def pick_highest_correlation_array(components_tuple, ecg_lead):
     """Here we have a function that takes a tuple with the two parts
