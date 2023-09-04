@@ -5,8 +5,9 @@ Licensed under the Apache License, version 2.0. See LICENSE for details.
 This file contains functions to preprocess with various EMG arrays.
 """
 
-
+import numpy as np
 from scipy import signal
+from scipy.signal import butter, lfilter
 
 def emg_bandpass_butter(data_emg, low_pass, high_pass):
     """The parameter taken in here is the Poly5 file. Output is
@@ -204,6 +205,34 @@ def bad_end_cutter_better(data_emg, percent_to_cut=7, tolerance_percent=10):
     return sample_cut
 
 
+
+def emg_lowpass_butter(array, cutoff, fs, order=5):
+    """
+    This is a lowpass filter of butterworth design.
+
+    :param array: 1d signal array usually of EMG
+    :type array: ~numpy.ndarray
+    :param cutoff: frequency above which to filter out
+    :type cutoff: int
+    :param fs: frequency array sampled at in Hertz
+    :type fs: int
+    :param order: order of the filter
+    :type order: int
+
+    :returns: signal_filtered
+    :rtype: ~numpy.ndarray
+    """
+
+    def helper_lowpass(cutoff, fs, order=5):
+        """
+        This is a helper function inside the butter_lowpass_filter function.
+        """
+        return butter(order, cutoff, fs=fs, btype='low', analog=False)
+
+    b, a = helper_lowpass(cutoff, fs, order=order)
+    signal_filtered = lfilter(b, a, array)
+    return signal_filtered
+
 def notch_filter(sample, sample_frequ, freq_to_pull, quality_factor_q):
     """This is a filter designed to take out a specific frequency.  In
     the EU in some data electrical cords can interfere at around 50
@@ -254,3 +283,52 @@ def emg_highpass_butter(data_emg, cut_above, sample_rate):
     emg_filtered = signal.sosfiltfilt(sos, data_emg)
     return emg_filtered
 
+def compute_power_loss(
+    original_signal,
+    original_signal_sampling_frequency,
+    processed_signal,
+    processed_signal_sampling_frequency
+):
+    """This function computes the percentage of power loss after the
+    processing of a signal. Inputs include the original_signal (signal
+    before the processing), :code:`original_signal_sampling_frequency`
+    (sampling frequency of the signal before processing),
+    :code:`processed_signal` (signal after processing),
+    :code:`processed_signal_sampling_frequency` (sampling frequency of
+    the signal after processing).
+
+    Output is the percentage of power loss.
+
+    :param original_signal: Array.
+    :type  original_signal: ~numpy.ndarray
+    :param original_signal_sampling_frequency: Sampling freq. original signal
+    :type original_signal_sampling_frequency: int
+    :param processed_signal: Array.
+    :type  processed_signal: ~numpy.ndarray
+    :param processed_signal_sampling_frequency: Sampling frequency processed
+        signal
+    :type processed_signal_sampling_frequency: int
+
+    :returns: Power loss
+    :rtype: float
+    """
+    nperseg = 1024
+    noverlap = 512
+
+    # power spectrum density of the original and
+    # processed signals using Welch method
+    Pxx_den_orig = signal.welch(  # as per Lu et al. 2009
+        original_signal,
+        original_signal_sampling_frequency,
+        nperseg=nperseg,
+        noverlap=noverlap,
+    )
+    Pxx_den_processed = signal.welch(
+        processed_signal,
+        processed_signal_sampling_frequency,
+        nperseg=nperseg,
+        noverlap=noverlap,)
+    # compute the percentage of power loss
+    power_loss = 100*(1-(np.sum(Pxx_den_processed)/np.sum(Pxx_den_orig)))
+
+    return power_loss
