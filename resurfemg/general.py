@@ -339,9 +339,8 @@ def delay_embedding(data, emb_dim, lag=1):
         msg = "cannot embed data of length {} with embedding dimension {} " \
             + "and lag {}, minimum required length is {}"
         raise ValueError(msg.format(len(data), emb_dim, lag, min_len))
-    m = len(data) - min_len + 1
-    indices = np.repeat([np.arange(emb_dim) * lag], m, axis=0)
-    indices += np.arange(m).reshape((m, 1))
+    _m = len(data) - min_len + 1
+    indices = np.repeat([np.arange(emb_dim) * lag], _m, axis=0)
+    indices += np.arange(_m).reshape((_m, 1))
     matrix_vectors = data[indices]
     return matrix_vectors
-

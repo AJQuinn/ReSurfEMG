@@ -38,8 +38,7 @@ def emg_bandpass_butter_sample(
     data_emg_samp,
     low_pass,
     high_pass,
-    sample_rate,
-    output='sos'
+    sample_rate
 ):
     """The paramemter taken in here is the Poly5 file.  Output is the
     EMG after a bandpass as made here.
@@ -223,8 +222,8 @@ def emg_lowpass_butter(array, cutoff, fs, order=5):
         """
         return butter(order, cutoff, fs=fs, btype='low', analog=False)
 
-    b, a = helper_lowpass(cutoff, fs, order=order)
-    signal_filtered = lfilter(b, a, array)
+    _b, _a = helper_lowpass(cutoff, fs, order=order)
+    signal_filtered = lfilter(_b, _a, array)
     return signal_filtered
 
 def notch_filter(sample, sample_frequ, freq_to_pull, quality_factor_q):
@@ -311,18 +310,18 @@ def compute_power_loss(
 
     # power spectrum density of the original and
     # processed signals using Welch method
-    Pxx_den_orig = signal.welch(  # as per Lu et al. 2009
+    p_xx_den_orig = signal.welch(  # as per Lu et al. 2009
         original_signal,
         original_signal_sampling_frequency,
         nperseg=nperseg,
         noverlap=noverlap,
     )
-    Pxx_den_processed = signal.welch(
+    p_xx_den_processed = signal.welch(
         processed_signal,
         processed_signal_sampling_frequency,
         nperseg=nperseg,
         noverlap=noverlap,)
     # compute the percentage of power loss
-    power_loss = 100*(1-(np.sum(Pxx_den_processed)/np.sum(Pxx_den_orig)))
+    power_loss = 100*(1-(np.sum(p_xx_den_processed)/np.sum(p_xx_den_orig)))
 
     return power_loss

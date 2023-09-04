@@ -7,50 +7,56 @@ This file contains functions extract the envelopes from EMG arrays.
 
 import numpy as np
 
-def full_rolling_rms(x, N):
+def full_rolling_rms(data_emg, window_length):
     """This function computes a root mean squared envelope over an
-    array :code:`x`.  To do this it uses number of sample values
-    :code:`N`. It differs from :func:`naive_rolling_rms` by that the
+    array :code:`data_emg`.  To do this it uses number of sample values
+    :code:`window_length`. It differs from :func:`naive_rolling_rms` by that the
     output is the same length as the input vector.
 
-    :param x: Samples from the EMG
-    :type x: ~numpy.ndarray
-    :param N: Length of the sample use as window for function
-    :type N: int
+    :param data_emg: Samples from the EMG
+    :type data_emg: ~numpy.ndarray
+    :param window_length: Length of the sample use as window for function
+    :type window_length: int
 
     :returns: The root-mean-squared EMG sample data
     :rtype: ~numpy.ndarray
     """
-    x_pad = np.pad(x, (0, N-1), 'constant', constant_values=(0, 0))
-    x2 = np.power(x_pad, 2)
-    window = np.ones(N)/float(N)
-    emg_rms = np.sqrt(np.convolve(x2, window, 'valid'))
+    x_pad = np.pad(
+        data_emg,
+        (0, window_length-1),
+        'constant', 
+        constant_values=(0, 0)
+    )
+
+    x_2 = np.power(x_pad, 2)
+    window = np.ones(window_length)/float(window_length)
+    emg_rms = np.sqrt(np.convolve(x_2, window, 'valid'))
     return emg_rms
 
-def naive_rolling_rms(x, N):
+def naive_rolling_rms(data_emg, window_length):
     """This function computes a root mean squared envelope over an
-    array :code:`x`. To do this it uses number of sample values
-    :code:`N`.
+    array :code:`data_emg`. To do this it uses number of sample values
+    :code:`window_length`.
 
-    :param x: Samples from the EMG
-    :type x: ~numpy.ndarray
-    :param N: Length of the sample use as window for function
-    :type N: int
+    :param data_emg: Samples from the EMG
+    :type data_emg: ~numpy.ndarray
+    :param window_length: Length of the sample use as window for function
+    :type window_length: int
 
     :returns: The root-mean-squared EMG sample data
     :rtype: ~numpy.ndarray
     """
-    xc = np.cumsum(abs(x)**2)
-    emg_rms = np.sqrt((xc[N:] - xc[:-N])/N)
+    x_c = np.cumsum(abs(data_emg)**2)
+    emg_rms = np.sqrt((x_c[window_length:] - x_c[:-window_length])/window_length)
     return emg_rms
 
 def running_smoother(array):
     """
     This is the smoother to use in time calculations
     """
-    n = len(array) // 10
-    new_list = np.convolve(abs(array), np.ones(n), "valid") / n
-    zeros = np.zeros(n - 1)
+    n_samples = len(array) // 10
+    new_list = np.convolve(abs(array), np.ones(n_samples), "valid") / n_samples
+    zeros = np.zeros(n_samples - 1)
     smoothed_array = np.hstack((new_list, zeros))
     return smoothed_array
 
@@ -152,7 +158,6 @@ def vect_naive_rolling_rms(x, N):
     :return: The root-mean-squared EMG sample data
     :rtype: ~numpy.ndarray
     """
-    xc = np.cumsum(np.abs(x)**2)
-    emg_rms = np.sqrt((xc[N:] - xc[:-N])/N)
+    x_c = np.cumsum(np.abs(x)**2)
+    emg_rms = np.sqrt((x_c[N:] - x_c[:-N])/N)
     return emg_rms
-

@@ -170,15 +170,15 @@ def area_under_curve(
     :returns: area; area under the curve
     :rtype: float
     """
-    if not (0 <= end_curve <= 100):
+    if not 0 <= end_curve <= 100:
         raise ValueError(
             'end_curve must be between 0 and 100, '
-            'but {} given'.format(end_curve),
+            f'but {end_curve} given',
         )
     if smooth_algorithm not in ('none', 'mid_savgol'):
         raise ValueError(
             'Possible values for smooth_algorithm are none and mid_savgol, '
-            'but {} given'.format(smooth_algorithm),
+            f'but {smooth_algorithm} given',
         )
 
     if array[start_index] < array[end_index]:
@@ -249,18 +249,18 @@ def find_peak_in_breath(
             mode='interp',
             cval=0.0,
         )
-        max_ind = (new_array2.argmax())
+        max_ind = new_array2.argmax()
         max_val = new_array[max_ind]
         smooth_max = new_array2[max_ind]
     elif smooth_algorithm == 'convy':
         abs_new_array = abs(new_array)
         new_array2 = evl.running_smoother(abs_new_array)
-        max_ind = (new_array2.argmax())
+        max_ind = new_array2.argmax()
         max_val = new_array[max_ind]
         smooth_max = new_array2[max_ind]
     else:
         abs_new_array = abs(new_array)
-        max_ind = (abs_new_array.argmax())
+        max_ind = abs_new_array.argmax()
         max_val = abs_new_array[max_ind]
         smooth_max = max_val
     return (max_ind, max_val, smooth_max)
@@ -397,9 +397,9 @@ def sampen(
     data = np.asarray(data)
 
     if tolerance is None:
-        lint_helper = (0.5627 * np.log(emb_dim) + 1.3334)
+        lint_helper = 0.5627 * np.log(emb_dim) + 1.3334
         tolerance = np.std(data, ddof=1) * 0.1164 * lint_helper
-    n = len(data)
+    n_samples = len(data)
 
     # build matrix of "template vectors"
     # (all consecutive subsequences of length m)
@@ -421,10 +421,10 @@ def sampen(
     # (otherwise first dimension would be n-emb_dim+1 and not n-emb_dim)
     t_vecs = gnr.delay_embedding(np.asarray(data), emb_dim + 1, lag=1)
     counts = []
-    for m in [emb_dim, emb_dim + 1]:
+    for _m in [emb_dim, emb_dim + 1]:
         counts.append(0)
         # get the matrix that we need for the current m
-        t_vecs_m = t_vecs[:n - m + 1, :m]
+        t_vecs_m = t_vecs[:n_samples - _m + 1, :_m]
         # successively calculate distances between each pair of templ vectrs
         for i in range(len(t_vecs_m) - 1):
             dsts = dist(t_vecs_m[i + 1:], t_vecs_m[i])
@@ -505,17 +505,17 @@ def sampen_optimized(
     # TODO: this function can still be further optimized
     data = np.asarray(data)
     if tolerance is None:
-        lint_helper = (0.5627 * np.log(1) + 1.3334)
+        lint_helper = 0.5627 * np.log(1) + 1.3334
         tolerance = np.std(data, ddof=1) * 0.1164 * lint_helper
-    n = len(data)
+    n_samples = len(data)
 
     # TODO(): This can be done with just using NumPy
     t_vecs = gnr.delay_embedding(np.asarray(data), 3, lag=1)
 
     if closed:
-        counts = calc_closed_sampent(t_vecs, n, tolerance)
+        counts = calc_closed_sampent(t_vecs, n_samples, tolerance)
     else:
-        counts = calc_open_sampent(t_vecs, n, tolerance)
+        counts = calc_open_sampent(t_vecs, n_samples, tolerance)
 
     if counts[0] > 0 and counts[1] > 0:
         saen = -np.log(1.0 * counts[1] / counts[0])
@@ -549,8 +549,8 @@ def calc_closed_sampent(t_vecs, n, tolerance):
     # TODO(someone?): Analogous to calc_open_sampent
     return np.nan, np.nan
 
-def calc_open_sampent(t_vecs, n, tolerance):
-    triplets = t_vecs[:n - 2, :3]
+def calc_open_sampent(t_vecs, n_samples, tolerance):
+    triplets = t_vecs[:n_samples - 2, :3]
 
     raw_dsts = tuple(
         triplets[i + 1:] - triplets[i]

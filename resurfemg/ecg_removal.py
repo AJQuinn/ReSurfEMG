@@ -15,7 +15,7 @@ from scipy.signal import find_peaks, savgol_filter
 
 from . import envelope as evl
 
-def compute_ICA_two_comp(emg_samples):
+def compute_ica_two_comp(emg_samples):
     """A function that performs an independent component analysis
     (ICA) meant for EMG data that includes three stacked arrays.
 
@@ -32,7 +32,7 @@ def compute_ICA_two_comp(emg_samples):
     component_1 = S.T[1]
     return component_0, component_1
 
-def compute_ICA_two_comp_multi(emg_samples):
+def compute_ica_two_comp_multi(emg_samples):
     """A function that performs an independant component analysis
     (ICA) meant for EMG data that includes stacked arrays,
     there should be at least two arrays but there can be more.
@@ -69,18 +69,18 @@ def pick_more_peaks_array(components_tuple):
         opposed to ECG)
     :rtype: ~numpy.ndarray
     """
-    c0 = components_tuple[0]
-    c1 = components_tuple[1]
-    low_border_c0 = (c0.max() - c0.mean())/4
-    peaks0, _0 = find_peaks(c0, height=low_border_c0, distance=10)
-    antipeaks0, anti_0 = find_peaks(
-        (c0*(-1)),
+    component_0 = components_tuple[0]
+    component_1 = components_tuple[1]
+    low_border_c0 = (component_0.max() - component_0.mean())/4
+    peaks0, _0 = find_peaks(component_0, height=low_border_c0, distance=10)
+    antipeaks0, _ = find_peaks(
+        (component_0*(-1)),
         height=-low_border_c0,
         distance=10)
-    low_border_c1 = (c1.max() - c1.mean())/4
-    peaks1, _1 = find_peaks(c1, height=low_border_c1, distance=10)
-    antipeaks1, anti_1 = find_peaks(
-        (c1*(-1)),
+    low_border_c1 = (component_1.max() - component_1.mean())/4
+    peaks1, _1 = find_peaks(component_1, height=low_border_c1, distance=10)
+    antipeaks1, _ = find_peaks(
+        (component_1*(-1)),
         height=-low_border_c1,
         distance=10,
     )
@@ -112,13 +112,13 @@ def pick_lowest_correlation_array(components_tuple, ecg_lead):
      to the ECG lead (should usually be the EMG as opposed to ECG)
     :rtype: ~numpy.ndarray
     """
-    c0 = components_tuple[0]
-    c1 = components_tuple[1]
+    component_0 = components_tuple[0]
+    component_1 = components_tuple[1]
 
     # create a tuple containing the data, each row is a variable,
     # each column is an observation
 
-    corr_tuple = np.row_stack((ecg_lead, c0, c1))
+    corr_tuple = np.row_stack((ecg_lead, component_0, component_1))
 
     # compute the correlation matrix
     # the absolute value is used, because the ICA decomposition might
@@ -153,9 +153,9 @@ def pick_highest_correlation_array(components_tuple, ecg_lead):
      to the ECG lead (should usually be the  ECG)
     :rtype: ~numpy.ndarray
     """
-    c0 = components_tuple[0]
-    c1 = components_tuple[1]
-    corr_tuple = np.row_stack((ecg_lead, c0, c1))
+    component_0 = components_tuple[0]
+    component_1 = components_tuple[1]
+    corr_tuple = np.row_stack((ecg_lead, component_0, component_1))
     corr_matrix = abs(np.corrcoef(corr_tuple))
 
     # get the component with the highest correlation to ECG
@@ -203,7 +203,7 @@ def gating(
         # Method 0: Fill with zeros
         # TODO: can rewrite with slices from numpy irange to be more efficient
         gate_samples = []
-        for i, peak in enumerate(gate_peaks):
+        for _, peak in enumerate(gate_peaks):
             for k in range(
                 max(0, peak - half_gate_width),
                 min(max_sample, peak + half_gate_width),
@@ -214,7 +214,7 @@ def gating(
     elif method == 1:
         # Method 1: Fill with interpolation pre- and post gate sample
         # TODO: rewrite with numpy interpolation for efficiency
-        for i, peak in enumerate(gate_peaks):
+        for _, peak in enumerate(gate_peaks):
             pre_ave_emg = src_signal[peak-half_gate_width-1]
 
             if (peak + half_gate_width + 1) < src_signal_gated.shape[0]:
@@ -237,7 +237,7 @@ def gating(
         #         ^               ^- gate start   ^- gate end
         #         - peak - half_gate_width * 3 (replacer)
 
-        for i, peak in enumerate(gate_peaks):
+        for _, peak in enumerate(gate_peaks):
             start = peak - half_gate_width * 3
             if start < 0:
                 start = peak + half_gate_width
@@ -252,7 +252,7 @@ def gating(
     elif method == 3:
         # Method 3: Fill with moving average over RMS
         gate_samples = []
-        for i, peak in enumerate(gate_peaks):
+        for _, peak in enumerate(gate_peaks):
             for k in range(
                 max([0, int(peak-gate_width/2)]),
                 min([max_sample, int(peak+gate_width/2)])
@@ -265,7 +265,7 @@ def gating(
             src_signal_gated_base,
             gate_width,)
 
-        for i, peak in enumerate(gate_peaks):
+        for _, peak in enumerate(gate_peaks):
             k_start = max([0, int(peak-gate_width/2)])
             k_end = min([int(peak+gate_width/2), max_sample])
 
@@ -329,4 +329,3 @@ def find_peaks_in_ecg_signal(ecg_signal, lower_border_percent=50):
         prominence=(max_peak*lower_border_percent/100, max_peak)
     )
     return set_ecg_peaks
-

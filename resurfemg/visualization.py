@@ -6,7 +6,6 @@ This file contains functions to visualize with various EMG arrays
 and other types of data arrays e.g. ventilator signals.
 """
 
-
 import numpy as np
 from scipy.fft import fft, fftfreq
 import matplotlib.pyplot as plt
@@ -28,13 +27,13 @@ def show_my_power_spectrum(sample, sample_rate, upper_window):
         frequencies (the values for plotting the power spectrum)
     :rtype: Tuple[float, float]
     """
-    N = len(sample)
+    n_samples = len(sample)
     # for our emgs sample rate is usually 2048
-    yf = np.abs(fft(sample))**2
-    xf = fftfreq(N, 1 / sample_rate)
+    y_f = np.abs(fft(sample))**2
+    x_f = fftfreq(n_samples, 1 / sample_rate)
 
-    idx = [i for i, v in enumerate(xf) if (0 <= v <= upper_window)]
+    idx = [i for i, v in enumerate(x_f) if 0 <= v <= upper_window]
 
-    plt.plot(xf[idx], yf[idx])
+    plt.plot(x_f[idx], y_f[idx])
     plt.show()
-    return yf, xf
+    return y_f, x_f
